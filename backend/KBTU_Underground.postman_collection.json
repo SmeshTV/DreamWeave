@@ -1,0 +1,340 @@
+{
+	"info": {
+		"_postman_id": "kbtu-underground-api",
+		"name": "KBTU Underground API",
+		"description": "API collection for KBTU Underground application - event management platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"demo\",\n  \"password\": \"demo123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/token/",
+							"host": ["{{baseUrl}}"],
+							"path": ["token", ""]
+						},
+						"description": "Login to get JWT tokens (access and refresh).\n\nExample response:\n```json\n{\n  \"access\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...\",\n  \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refresh\": \"...\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/token/refresh/",
+							"host": ["{{baseUrl}}"],
+							"path": ["token", "refresh", ""]
+						},
+						"description": "Refresh an expired access token using the refresh token.\n\nExample request:\n```json\n{\n  \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...\"\n}\n\nExample response:\n```json\n{\n  \"access\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"test\",\n  \"email\": \"test@kbtu.kz\",\n  \"password\": \"test123\",\n  \"password_confirm\": \"test123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/register/",
+							"host": ["{{baseUrl}}"],
+							"path": ["register", ""]
+						},
+						"description": "Register a new user account.\n\nExample response:\n```json\n{\n  \"id\": 1,\n  \"username\": \"test\",\n  \"email\": \"test@kbtu.kz\"\n}\n```"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "List All Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", ""]
+						},
+						"description": "Retrieve a list of all events.\n\nExample response:\n```json\n{\n  \"count\": 10,\n  \"next\": null,\n  \"previous\": null,\n  \"results\": [\n    {\n      \"id\": 1,\n      \"title\": \"Python Workshop\",\n      \"description\": \"Learn Python basics\",\n      \"category\": 1,\n      \"location\": \"KBTU\",\n      \"date\": \"2026-05-01T18:00:00Z\",\n      \"is_free\": true,\n      \"owner\": 1\n    }\n  ]\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/1/",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "1", ""]
+						},
+						"description": "Retrieve details of a single event by ID.\n\nExample response:\n```json\n{\n  \"id\": 1,\n  \"title\": \"Python Workshop\",\n  \"description\": \"Learn Python basics\",\n  \"category\": 1,\n  \"location\": \"KBTU\",\n  \"date\": \"2026-05-01T18:00:00Z\",\n  \"is_free\": true,\n  \"owner\": 1,\n  \"created_at\": \"2026-04-01T10:00:00Z\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Test Event\",\n  \"description\": \"Test\",\n  \"category\": 1,\n  \"location\": \"KBTU\",\n  \"date\": \"2026-05-01T18:00:00Z\",\n  \"is_free\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events/",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", ""]
+						},
+						"description": "Create a new event. Requires authentication.\n\nExample response:\n```json\n{\n  \"id\": 2,\n  \"title\": \"Test Event\",\n  \"description\": \"Test\",\n  \"category\": 1,\n  \"location\": \"KBTU\",\n  \"date\": \"2026-05-01T18:00:00Z\",\n  \"is_free\": true,\n  \"owner\": 1,\n  \"created_at\": \"2026-04-07T12:00:00Z\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"Updated description\",\n  \"category\": 1,\n  \"location\": \"KBTU Main Hall\",\n  \"date\": \"2026-05-02T19:00:00Z\",\n  \"is_free\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events/1/",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "1", ""]
+						},
+						"description": "Update an existing event. Requires authentication and must be the event owner.\n\nExample response:\n```json\n{\n  \"id\": 1,\n  \"title\": \"Updated Event\",\n  \"description\": \"Updated description\",\n  \"category\": 1,\n  \"location\": \"KBTU Main Hall\",\n  \"date\": \"2026-05-02T19:00:00Z\",\n  \"is_free\": false,\n  \"owner\": 1\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Event",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/1/",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "1", ""]
+						},
+						"description": "Delete an event. Requires authentication and must be the event owner.\n\nExample response: 204 No Content"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/search/?query=python&is_free=true",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "search", ""],
+							"query": [
+								{
+									"key": "query",
+									"value": "python"
+								},
+								{
+									"key": "is_free",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Search events by query string and filters.\n\nExample response:\n```json\n{\n  \"count\": 3,\n  \"results\": [\n    {\n      \"id\": 1,\n      \"title\": \"Python Workshop\",\n      \"description\": \"Learn Python basics\",\n      \"is_free\": true\n    }\n  ]\n}\n```"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "List Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories/",
+							"host": ["{{baseUrl}}"],
+							"path": ["categories", ""]
+						},
+						"description": "Retrieve a list of all event categories.\n\nExample response:\n```json\n[\n  {\n    \"id\": 1,\n    \"name\": \"Workshop\",\n    \"slug\": \"workshop\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Meetup\",\n    \"slug\": \"meetup\"\n  }\n]\n```"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reviews",
+			"item": [
+				{
+					"name": "List Reviews for Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/1/reviews/",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "1", "reviews", ""]
+						},
+						"description": "Retrieve all reviews for a specific event.\n\nExample response:\n```json\n{\n  \"count\": 5,\n  \"results\": [\n    {\n      \"id\": 1,\n      \"event\": 1,\n      \"user\": 2,\n      \"rating\": 5,\n      \"comment\": \"Great event!\",\n      \"created_at\": \"2026-05-02T10:00:00Z\"\n    }\n  ]\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": 5,\n  \"comment\": \"Great event!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events/1/reviews/",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "1", "reviews", ""]
+						},
+						"description": "Create a new review for an event. Requires authentication.\n\nExample response:\n```json\n{\n  \"id\": 6,\n  \"event\": 1,\n  \"user\": 1,\n  \"rating\": 5,\n  \"comment\": \"Great event!\",\n  \"created_at\": \"2026-05-02T12:00:00Z\"\n}\n```"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/profile/",
+							"host": ["{{baseUrl}}"],
+							"path": ["profile", ""]
+						},
+						"description": "Retrieve the authenticated user's profile. Requires authentication.\n\nExample response:\n```json\n{\n  \"id\": 1,\n  \"username\": \"demo\",\n  \"email\": \"demo@kbtu.kz\",\n  \"bio\": \"Student\",\n  \"telegram_id\": \"@username\",\n  \"created_at\": \"2026-01-01T00:00:00Z\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bio\": \"Student\",\n  \"telegram_id\": \"@username\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/profile/",
+							"host": ["{{baseUrl}}"],
+							"path": ["profile", ""]
+						},
+						"description": "Update the authenticated user's profile. Requires authentication.\n\nExample response:\n```json\n{\n  \"id\": 1,\n  \"username\": \"demo\",\n  \"email\": \"demo@kbtu.kz\",\n  \"bio\": \"Student\",\n  \"telegram_id\": \"@username\"\n}\n```"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

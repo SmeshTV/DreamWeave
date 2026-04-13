@@ -1,0 +1,81 @@
+<div class="detail-container">
+  @if (loading) {
+    <p class="loading">Loading event details...</p>
+  } @else if (error) {
+    <p class="error">{{ error }}</p>
+    <a routerLink="/events" class="back-link">Back to Events</a>
+  } @else if (event) {
+    <a routerLink="/events" class="back-link">&larr; Back to Events</a>
+
+    <div class="event-main">
+      <div class="event-info">
+        <span class="event-date">{{ event.date | date:'EEEE, MMMM d, y, h:mm a' }}</span>
+        <h1>{{ event.title }}</h1>
+        <p class="event-meta">
+          <span>by {{ event.created_by_name }}</span>
+          <span>|</span>
+          <span>{{ event.category_name }}</span>
+        </p>
+        <p class="event-location">{{ event.location }}</p>
+        <span class="event-badge" [class.free]="event.is_free" [class.paid]="!event.is_free">
+          {{ event.is_free ? 'Free' : 'Paid' }}
+        </span>
+      </div>
+      <div class="event-description">
+        <h3>Description</h3>
+        <p>{{ event.description }}</p>
+      </div>
+    </div>
+
+    <section class="reviews-section">
+      <h2>Reviews ({{ reviews.length }})</h2>
+
+      @if (auth.isLoggedIn()) {
+        <div class="review-form">
+          <h3>Write a Review</h3>
+          @if (reviewError) {
+            <p class="error">{{ reviewError }}</p>
+          }
+          <div class="rating-input">
+            <label>Rating:</label>
+            <select [(ngModel)]="newRating" name="rating">
+              <option [value]="1">1 - Poor</option>
+              <option [value]="2">2 - Fair</option>
+              <option [value]="3">3 - Good</option>
+              <option [value]="4">4 - Very Good</option>
+              <option [value]="5">5 - Excellent</option>
+            </select>
+          </div>
+          <textarea
+            [(ngModel)]="newComment"
+            name="comment"
+            placeholder="Write your review..."
+            rows="3"
+          ></textarea>
+          <button class="btn-submit" (click)="submitReview()">Submit Review</button>
+        </div>
+      } @else {
+        <p class="login-prompt">
+          <a routerLink="/login">Log in</a> to write a review.
+        </p>
+      }
+
+      <div class="reviews-list">
+        @for (review of reviews; track review.id) {
+          <div class="review-item">
+            <div class="review-header">
+              <span class="review-author">{{ review.author_name }}</span>
+              <span class="review-rating">
+                {{ '★'.repeat(review.rating) }}{{ '☆'.repeat(5 - review.rating) }}
+              </span>
+            </div>
+            <p class="review-comment">{{ review.comment }}</p>
+            <span class="review-date">{{ review.created_at | date:'MMM d, y' }}</span>
+          </div>
+        } @empty {
+          <p class="no-reviews">No reviews yet. Be the first!</p>
+        }
+      </div>
+    </section>
+  }
+</div>

@@ -1,0 +1,43 @@
+<div class="home-container">
+  <header class="hero">
+    <h1>KBTU Underground</h1>
+    <p>Discover events, connect with peers, and make the most of university life</p>
+    <a routerLink="/events" class="btn-primary">Browse All Events</a>
+  </header>
+
+  <section class="categories-section">
+    <h2>Categories</h2>
+    <div class="categories-grid">
+      @for (cat of categories; track cat.id) {
+        <div class="category-card">
+          <span class="category-icon">{{ cat.icon }}</span>
+          <h3>{{ cat.name }}</h3>
+          <p>{{ cat.description }}</p>
+          <span class="events-count">{{ cat.events_count }} events</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="events-section">
+    <h2>Upcoming Events</h2>
+    @if (loading) {
+      <p class="loading">Loading events...</p>
+    } @else if (error) {
+      <p class="error">{{ error }}</p>
+    } @else {
+      <div class="events-grid">
+        @for (event of events; track event.id) {
+          <div class="event-card" [routerLink]="['/events', event.id]">
+            <div class="event-date">{{ event.date | date:'MMM d, y' }}</div>
+            <h3>{{ event.title }}</h3>
+            <p class="event-location">{{ event.location }}</p>
+            <span class="event-badge" [class.free]="event.is_free" [class.paid]="!event.is_free">
+              {{ event.is_free ? 'Free' : 'Paid' }}
+            </span>
+          </div>
+        }
+      </div>
+    }
+  </section>
+</div>

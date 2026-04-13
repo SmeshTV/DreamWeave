@@ -1,0 +1,55 @@
+<div class="events-container">
+  <h1>All Events</h1>
+
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="Search events..."
+      name="searchQuery"
+    />
+
+    <select [(ngModel)]="selectedCategory" name="category" class="select-filter">
+      <option [ngValue]="null">All Categories</option>
+      @for (cat of categories; track cat.id) {
+        <option [ngValue]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+
+    <label class="checkbox-label">
+      <input type="checkbox" [(ngModel)]="onlyFree" name="onlyFree" />
+      Free only
+    </label>
+
+    <button class="btn-search" (click)="onSearch()">Search</button>
+    <button class="btn-reset" (click)="onReset()">Reset</button>
+  </div>
+
+  @if (loading) {
+    <p class="loading">Loading events...</p>
+  } @else if (error) {
+    <p class="error">{{ error }}</p>
+  } @else if (events.length === 0) {
+    <p class="no-events">No events found. Try different filters.</p>
+  } @else {
+    <div class="events-grid">
+      @for (event of events; track event.id) {
+        <div class="event-card" [routerLink]="['/events', event.id]">
+          <div class="event-header">
+            <span class="event-date">{{ event.date | date:'MMM d, y, h:mm a' }}</span>
+            <span class="event-badge" [class.free]="event.is_free" [class.paid]="!event.is_free">
+              {{ event.is_free ? 'Free' : 'Paid' }}
+            </span>
+          </div>
+          <h3>{{ event.title }}</h3>
+          <p class="event-description">{{ event.description | slice:0:120 }}...</p>
+          <div class="event-footer">
+            <span class="event-location">{{ event.location }}</span>
+            <span class="event-author">by {{ event.created_by_name }}</span>
+          </div>
+          <span class="reviews-count">{{ event.reviews_count }} review(s)</span>
+        </div>
+      }
+    </div>
+  }
+</div>

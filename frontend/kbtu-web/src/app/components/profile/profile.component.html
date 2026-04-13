@@ -1,0 +1,62 @@
+<div class="profile-container">
+  <h1>My Profile</h1>
+
+  @if (loading) {
+    <p class="loading">Loading profile...</p>
+  } @else if (error) {
+    <p class="error">{{ error }}</p>
+  } @else if (profile) {
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="avatar-placeholder">
+          {{ profile.username.charAt(0).toUpperCase() }}
+        </div>
+        <div class="profile-info">
+          <h2>{{ profile.username }}</h2>
+          <p class="email">{{ profile.email }}</p>
+        </div>
+      </div>
+
+      <div class="profile-details">
+        <div class="detail-row">
+          <span class="detail-label">Telegram ID:</span>
+          @if (isEditing) {
+            <input
+              type="text"
+              [(ngModel)]="editTelegram"
+              name="telegram"
+              class="edit-input"
+              placeholder="Your Telegram username"
+            />
+          } @else {
+            <span class="detail-value">{{ profile.telegram_id || 'Not set' }}</span>
+          }
+        </div>
+
+        <div class="detail-row">
+          <span class="detail-label">Bio:</span>
+          @if (isEditing) {
+            <textarea
+              [(ngModel)]="editBio"
+              name="bio"
+              class="edit-input"
+              rows="3"
+              placeholder="Tell us about yourself"
+            ></textarea>
+          } @else {
+            <span class="detail-value">{{ profile.bio || 'Not set' }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        @if (isEditing) {
+          <button class="btn-save" (click)="saveProfile()">Save Changes</button>
+          <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+        } @else {
+          <button class="btn-edit" (click)="startEdit()">Edit Profile</button>
+        }
+      </div>
+    </div>
+  }
+</div>
