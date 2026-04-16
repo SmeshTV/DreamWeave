@@ -7,6 +7,7 @@
       [(ngModel)]="searchQuery"
       placeholder="Search events..."
       name="searchQuery"
+      (ngModelChange)="onSearch()"
     />
 
     <select [(ngModel)]="selectedCategory" name="category" class="select-filter">
@@ -17,9 +18,15 @@
     </select>
 
     <label class="checkbox-label">
-      <input type="checkbox" [(ngModel)]="onlyFree" name="onlyFree" />
+      <input type="checkbox" [(ngModel)]="onlyFree" name="onlyFree" (change)="onSearch()" />
       Free only
     </label>
+
+    <select [(ngModel)]="completedFilter" name="completedFilter" class="select-filter" (change)="onSearch()">
+      <option value="all">All Events</option>
+      <option value="upcoming">Upcoming</option>
+      <option value="completed">Completed</option>
+    </select>
 
     <button class="btn-search" (click)="onSearch()">Search</button>
     <button class="btn-reset" (click)="onReset()">Reset</button>
@@ -35,6 +42,9 @@
     <div class="events-grid">
       @for (event of events; track event.id) {
         <div class="event-card" [routerLink]="['/events', event.id]">
+          @if (event.image_url) {
+            <img [src]="event.image_url" alt="{{ event.title }}" class="event-image" />
+          }
           <div class="event-header">
             <span class="event-date">{{ event.date | date:'MMM d, y, h:mm a' }}</span>
             <span class="event-badge" [class.free]="event.is_free" [class.paid]="!event.is_free">
@@ -43,6 +53,12 @@
           </div>
           <h3>{{ event.title }}</h3>
           <p class="event-description">{{ event.description | slice:0:120 }}...</p>
+          @if (event.avg_rating) {
+            <div class="event-rating">
+              <span class="stars">{{ '★'.repeat(Math.round(event.avg_rating)) }}{{ '☆'.repeat(5 - Math.round(event.avg_rating)) }}</span>
+              <span class="rating-value">{{ event.avg_rating.toFixed(1) }}</span>
+            </div>
+          }
           <div class="event-footer">
             <span class="event-location">{{ event.location }}</span>
             <span class="event-author">by {{ event.created_by_name }}</span>

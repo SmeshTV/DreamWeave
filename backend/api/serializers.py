@@ -29,6 +29,8 @@ class EventSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     created_by_name = serializers.CharField(source='created_by.username', read_only=True)
     reviews_count = serializers.SerializerMethodField()
+    avg_rating = serializers.SerializerMethodField()
+    is_completed = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -36,12 +38,21 @@ class EventSerializer(serializers.ModelSerializer):
             'id', 'title', 'description', 'category', 'category_name',
             'location', 'date', 'image_url', 'is_free',
             'created_by', 'created_by_name', 'created_at', 'updated_at',
-            'reviews_count'
+            'reviews_count', 'avg_rating', 'is_completed'
         ]
         read_only_fields = ['created_by', 'created_at', 'updated_at']
 
     def get_reviews_count(self, obj):
         return obj.reviews.count()
+
+    def get_avg_rating(self, obj):
+        from django.db.models import Avg
+        result = obj.reviews.aggregate(avg=Avg('rating'))
+        return result['avg']
+
+    def get_is_completed(self, obj):
+        from django.utils import timezone
+        return obj.date < timezone.now()
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
@@ -92,3 +103,4 @@ class EventSearchSerializer(serializers.Serializer):
     is_free = serializers.BooleanField(required=False, allow_null=True)
     date_from = serializers.DateField(required=False, allow_null=True)
     date_to = serializers.DateField(required=False, allow_null=True)
+    is_completed = serializers.BooleanField(required=False, allow_null=True)

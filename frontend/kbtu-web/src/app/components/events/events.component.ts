@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { Event, Category, EventSearch } from '../../interfaces';
 
@@ -21,6 +22,10 @@ export class EventsComponent implements OnInit {
   searchQuery = '';
   selectedCategory: number | null = null;
   onlyFree = false;
+  completedFilter: string = 'all';
+  Math = Math;
+
+  private searchSubject = new Subject<void>();
 
   constructor(
     private api: ApiService,
@@ -30,6 +35,10 @@ export class EventsComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategories();
     this.loadEvents();
+
+    this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => {
+      this.loadEvents();
+    });
   }
 
   loadCategories(): void {
@@ -47,10 +56,15 @@ export class EventsComponent implements OnInit {
     this.error = null;
     this.cdr.detectChanges();
 
+    let isCompleted: boolean | null = null;
+    if (this.completedFilter === 'completed') isCompleted = true;
+    else if (this.completedFilter === 'upcoming') isCompleted = false;
+
     const params: EventSearch = {
       query: this.searchQuery || undefined,
       category_id: this.selectedCategory,
       is_free: this.onlyFree,
+      is_completed: isCompleted,
     };
 
     this.api.searchEvents(params).subscribe({
@@ -68,13 +82,14 @@ export class EventsComponent implements OnInit {
   }
 
   onSearch(): void {
-    this.loadEvents();
+    this.searchSubject.next();
   }
 
   onReset(): void {
     this.searchQuery = '';
     this.selectedCategory = null;
     this.onlyFree = false;
-    this.loadEvents();
+    this.completedFilter = 'all';
+    this.searchSubject.next();
   }
 }

@@ -52,6 +52,7 @@ export class ApiService {
     if (params.is_free !== null && params.is_free !== undefined) httpParams = httpParams.set('is_free', params.is_free.toString());
     if (params.date_from) httpParams = httpParams.set('date_from', params.date_from);
     if (params.date_to) httpParams = httpParams.set('date_to', params.date_to);
+    if (params.is_completed !== null && params.is_completed !== undefined) httpParams = httpParams.set('is_completed', params.is_completed.toString());
     return this.http.get(`${API_URL}/events/search/`, { params: httpParams });
   }
 

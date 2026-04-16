@@ -97,6 +97,12 @@ def search_events(request):
         events = events.filter(date__gte=data['date_from'])
     if data.get('date_to'):
         events = events.filter(date__lte=data['date_to'])
+    if data.get('is_completed') is not None:
+        from django.utils import timezone
+        if data['is_completed']:
+            events = events.filter(date__lt=timezone.now())
+        else:
+            events = events.filter(date__gte=timezone.now())
 
     output_serializer = EventSerializer(events, many=True, context={'request': request})
     return Response({'count': len(output_serializer.data), 'results': output_serializer.data})

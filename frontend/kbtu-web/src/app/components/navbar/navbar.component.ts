@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 export class NavbarComponent implements OnInit, OnDestroy {
   loggedIn = false;
   username: string | null = null;
+  menuOpen = false;
   private authSubscription!: Subscription;
 
   constructor(private auth: AuthService) {}
@@ -31,6 +32,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
   private updateAuthState(): void {
     this.loggedIn = this.auth.isLoggedIn();
     this.username = this.auth.getUsername();
@@ -39,5 +48,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   onLogout(): void {
     this.auth.logout();
     this.updateAuthState();
+    this.closeMenu();
   }
 }

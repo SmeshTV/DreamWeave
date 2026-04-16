@@ -22,6 +22,8 @@ export interface Event {
   created_at: string;
   updated_at: string;
   reviews_count: number;
+  avg_rating: number | null;
+  is_completed: boolean;
 }
 
 export interface Review {
@@ -56,4 +58,5 @@ export interface EventSearch {
   is_free?: boolean | null;
   date_from?: string | null;
   date_to?: string | null;
+  is_completed?: boolean | null;
 }
