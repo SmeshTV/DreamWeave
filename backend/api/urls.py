@@ -2,7 +2,10 @@ from django.urls import path
 from .views import (
     EventListCreateView, EventDetailView,
     search_events, register_user,
-    CategoryListCreateView, ReviewListCreateView, ProfileView
+
+    CategoryListCreateView, ReviewListCreateView, ProfileView,
+    UserReviewsView
+
 )
 
 urlpatterns = [
@@ -21,6 +24,7 @@ urlpatterns = [
 
     # Profile
     path('profile/', ProfileView.as_view(), name='user-profile'),
+    path('profile/reviews/', UserReviewsView.as_view(), name='user-reviews'),
 
     # Registration
     path('register/', register_user, name='user-register'),

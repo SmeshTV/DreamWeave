@@ -78,4 +78,7 @@ export class ApiService {
   updateProfile(data: Partial<UserProfile>): Observable<UserProfile> {
     return this.http.put<UserProfile>(`${API_URL}/profile/`, data);
   }
+  getUserReviews(): Observable<Review[]> {
+    return this.http.get<Review[]>(`${API_URL}/profile/reviews/`);
+  }
 }

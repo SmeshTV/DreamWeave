@@ -1,21 +1,24 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
-import { UserProfile } from '../../interfaces';
+import { UserProfile, Review } from '../../interfaces';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
   profile: UserProfile | null = null;
+  userReviews: Review[] = [];
   loading = true;
   error: string | null = null;
+  reviewsLoading = true;
 
   isEditing = false;
   editBio = '';
@@ -29,6 +32,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfile();
+    this.loadUserReviews();
   }
 
   loadProfile(): void {
@@ -47,6 +51,23 @@ export class ProfileComponent implements OnInit {
       error: () => {
         this.error = 'Cannot connect to backend. Make sure server is running on port 8000.';
         this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadUserReviews(): void {
+    this.reviewsLoading = true;
+    this.cdr.detectChanges();
+
+    this.api.getUserReviews().subscribe({
+      next: (reviews) => {
+        this.userReviews = reviews;
+        this.reviewsLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.reviewsLoading = false;
         this.cdr.detectChanges();
       }
     });

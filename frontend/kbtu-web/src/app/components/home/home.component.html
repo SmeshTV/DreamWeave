@@ -9,7 +9,7 @@
     <h2>Categories</h2>
     <div class="categories-grid">
       @for (cat of categories; track cat.id) {
-        <div class="category-card">
+        <div class="category-card" [routerLink]="['/events']" [queryParams]="{category: cat.id}">
           <span class="category-icon">{{ cat.icon }}</span>
           <h3>{{ cat.name }}</h3>
           <p>{{ cat.description }}</p>

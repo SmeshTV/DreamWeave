@@ -15,6 +15,7 @@ export interface Event {
   category_name: string;
   location: string;
   date: string;
+  end_date: string | null;
   image_url: string;
   is_free: boolean;
   created_by: number;
@@ -24,11 +25,13 @@ export interface Event {
   reviews_count: number;
   avg_rating: number | null;
   is_completed: boolean;
+  status: 'upcoming' | 'in_progress' | 'completed';
 }
 
 export interface Review {
   id: number;
   event: number;
+  event_title?: string;
   author: number;
   author_name: string;
   rating: number;

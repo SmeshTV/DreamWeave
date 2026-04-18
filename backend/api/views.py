@@ -11,7 +11,8 @@ from django.db.models import Q, Avg
 from .models import Category, Event, Review, UserProfile
 from .serializers import (
     CategorySerializer, EventSerializer, ReviewSerializer,
-    UserProfileSerializer, UserRegistrationSerializer, EventSearchSerializer
+    UserProfileSerializer, UserRegistrationSerializer, EventSearchSerializer,
+    ReviewWithEventSerializer
 )
 
 
@@ -188,3 +189,13 @@ class ProfileView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserReviewsView(APIView):
+    """CBV: Get current user's reviews (attended events)"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        reviews = Review.objects.filter(author=request.user).select_related('event')
+        serializer = ReviewWithEventSerializer(reviews, many=True)
+        return Response(serializer.data)

@@ -46,7 +46,13 @@
             <img [src]="event.image_url" alt="{{ event.title }}" class="event-image" />
           }
           <div class="event-header">
-            <span class="event-date">{{ event.date | date:'MMM d, y, h:mm a' }}</span>
+            @if (event.status === 'in_progress') {
+              <span class="event-status in-progress">In Progress</span>
+            } @else if (event.status === 'completed') {
+              <span class="event-status completed">Completed</span>
+            } @else {
+              <span class="event-date">{{ event.date | date:'MMM d, y, h:mm a' }}</span>
+            }
             <span class="event-badge" [class.free]="event.is_free" [class.paid]="!event.is_free">
               {{ event.is_free ? 'Free' : 'Paid' }}
             </span>

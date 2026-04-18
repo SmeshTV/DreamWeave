@@ -58,5 +58,27 @@
         }
       </div>
     </div>
+
+    <div class="attended-events-section">
+      <h2>Attended Events ({{ userReviews.length }})</h2>
+      @if (reviewsLoading) {
+        <p class="loading">Loading...</p>
+      } @else if (userReviews.length === 0) {
+        <p class="no-events">You haven't attended any events yet.</p>
+      } @else {
+        <div class="reviews-grid">
+          @for (review of userReviews; track review.id) {
+            <div class="review-card" [routerLink]="['/events', review.event]">
+              <div class="review-event-title">{{ review.event_title }}</div>
+              <div class="review-rating">
+                {{ '★'.repeat(review.rating) }}{{ '☆'.repeat(5 - review.rating) }}
+              </div>
+              <p class="review-comment">{{ review.comment }}</p>
+              <span class="review-date">{{ review.created_at | date:'MMM d, y' }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
   }
 </div>

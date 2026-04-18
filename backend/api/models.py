@@ -24,6 +24,7 @@ class Event(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='events')
     location = models.CharField(max_length=200, blank=True)
     date = models.DateTimeField()
+    end_date = models.DateTimeField(null=True, blank=True)
     image_url = models.URLField(blank=True, default='')
     is_free = models.BooleanField(default=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_events')

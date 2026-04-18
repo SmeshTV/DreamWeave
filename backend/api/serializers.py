@@ -25,20 +25,31 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ['author', 'created_at']
 
 
+class ReviewWithEventSerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source='author.username', read_only=True)
+    event_title = serializers.CharField(source='event.title', read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ['id', 'event', 'event_title', 'author', 'author_name', 'rating', 'comment', 'created_at']
+        read_only_fields = ['author', 'created_at']
+
+
 class EventSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     created_by_name = serializers.CharField(source='created_by.username', read_only=True)
     reviews_count = serializers.SerializerMethodField()
     avg_rating = serializers.SerializerMethodField()
     is_completed = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
         fields = [
             'id', 'title', 'description', 'category', 'category_name',
-            'location', 'date', 'image_url', 'is_free',
+            'location', 'date', 'end_date', 'image_url', 'is_free',
             'created_by', 'created_by_name', 'created_at', 'updated_at',
-            'reviews_count', 'avg_rating', 'is_completed'
+            'reviews_count', 'avg_rating', 'is_completed', 'status'
         ]
         read_only_fields = ['created_by', 'created_at', 'updated_at']
 
@@ -52,7 +63,27 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_is_completed(self, obj):
         from django.utils import timezone
+        if obj.end_date:
+            return obj.end_date < timezone.now()
         return obj.date < timezone.now()
+
+    def get_status(self, obj):
+        from django.utils import timezone
+        now = timezone.now()
+        if obj.end_date:
+            if now < obj.date:
+                return 'upcoming'
+            elif now <= obj.end_date:
+                return 'in_progress'
+            else:
+                return 'completed'
+        else:
+            if now < obj.date:
+                return 'upcoming'
+            elif now <= obj.date:
+                return 'in_progress'
+            else:
+                return 'completed'
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
